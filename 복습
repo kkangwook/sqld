@@ -1,0 +1,111 @@
+복습
+1. sql plus에서 로그인하고 사용자 만들고 연결하고 비번 변경하고 삭제하고 현재 사용자와 여태 만들어진 사용자 보는법
+2. emp에서 hiredate이 1982년인 사람들만 뽑는 4가지 방법
+3. select문 만을 사용해 professor 테이블을 대상으로 각 학과에 소속된 유일한 직위(position)와 그에 따른 deptno 출력하기
+4. emp에서  ename에 L이 두 자가 포함되거나 또는 deptno가 20인 모든 사원 출력하기
+5. EMP 테이블에서 입사일(hiredate)이 1981년 2월 20과 1981년 5월 1일 사이에 입사한 사원의 ename, job, hiredate을 출력하는 SELECT문 작성하기 
+
+6. 두 테이블 만들고 데이터 삽입하고 pk-fk로 잇기
+ * 테이블명 : animal_ins_st
+ * 칼럼명 : AID(동물 ID), 자료형 : int, 제약조건 : 기본키
+ * 칼럼명 : ATYPE(동물 유형), 자료형 : 고정길이 문자형(20자리), 제약조건 : 생략 불가
+ * 칼럼명 : DATETIME(입소일), 자료형 : 날짜형, 제약조건 : 생략 불가
+ * 칼럼명 : CONDITION(상태), 자료형 : 고정길이 문자형(최대 10자리), 제약조건 : 생략 가능
+ * 칼럼명 : ANAME(동물 이름), 자료형 : 가변길이 문자형(최대 30자리), 제약조건 : 생략 가능
+
+1001, '강아지', sysdate,	'양호','푸들'
+1002, '강아지', sysdate,	'부상','진도'
+1003, '고양이', sysdate,'양호',	'러시안블루'
+1004, '강아지', sysdate,	'부상', 	'달마티안'
+
+얘는 컬럼명 명시해서 넣기 1005, '고양이','양호', '봄베이'
+
+ * 테이블명 : animal_outs_st
+ * 칼럼명 : AID(동물 ID) -> 자료형 : int, 제약조건 : 생략불가, 중복 불가
+ * 칼럼명 : ATYPE(동물 유형) -> 자료형 : 고정길이 문자형(20자리), 제약조건 : 생략 불가
+ * 칼럼명 : DATETIME(입양일) -> 자료형 : 날짜형, 제약조건 : 생략 불가
+ * 칼럼명 : ANAME(동물 이름) -> 자료형 : 가변길이 문자형(최대 20자리), 제약조건 : 생략 가능  
+ * 외래키 : AID(동물 ID) -> animal_ins의 기본키 적용  
+
+1001, '강아지', '2020-10-03', '푸들'
+1003, '고양이', '2025-12-10','러시안블루'
+1006, '고양이', '2020-06-10', '메이쿤'
+
+7. animal_out_st에서 20년도애들 종을 호랑이로 바꾸기
+8. animal_ins_st에서 부상인 애들 레코드만 지우기
+9.사용자 데이터 사전 뷰를 이용하여 전체 테이블을 오름차순 정렬하여 animal_ins_st,animal_outs_st 테이블의 목록을 확인
+10. animal_outs 테이블의 제약조건을 확인하고, 제약조건 중에서 외래키(FOREIGN KEY)로 지정된 칼럼명을 찾으시오. (두가지 방법 사용해야함)
+11. 위의 두 테이블 삭제하기
+12. 휴지통도 비우기
+
+12. 다중 테이블에 insert(정답은 chap04 DML)
+두 데이블 만들고 emp에서 deptno20인 정보들 양쪽에 집어넣기
+create table emp_hir
+as
+select EMPNO, ENAME, HIREDATE from emp where 1=0;
+
+create table emp_mgr
+as
+select EMPNO, ENAME, MGR from emp where 1=0;
+
+13. 다중 컬럼 수정
+emp카피 만들고 진행
+->SCOTT 사원의 부서번호 20번, 직급은 MANAGER로 한꺼번에 수정
+
+14.merge문
+밑의 테이블 이름 달리 해서 만들고 MEMBER_BACK에 회원ID가 있으면 갱신, 없으면 추가
+CREATE TABLE MEMBER(
+MEMBER_ID NUMBER(4),
+NAME VARCHAR2(20),
+EMAIL VARCHAR2(50),
+PHONE CHAR(20)
+);
+INSERT INTO MEMBER VALUES(1001, '홍길동', 'hong@gmail.com','010-xxx-4672');
+INSERT INTO MEMBER VALUES(1002, '이순신', 'lee@naver.com', '010-xxx-1234');
+INSERT INTO MEMBER VALUES(1003, '강감찬', 'kang@gmail.com', '010-xxx-1609');
+INSERT INTO MEMBER VALUES(1004, '유관순', 'yoo@naver.com', '010-xxxx-4321');
+INSERT INTO MEMBER VALUES(1005, '안중근', 'ann@naver.com', '010-xxxx-6373');
+
+select * from member;
+
+CREATE TABLE MEMBER_BACK
+AS
+SELECT * FROM MEMBER WHERE 1=0;
+
+INSERT INTO MEMBER_BACK VALUES(1001, '홍길동', NULL, NULL);
+INSERT INTO MEMBER_BACK VALUES(1003, '강감찬', 'kang@gmail.com', NULL);
+INSERT INTO MEMBER_BACK VALUES(1005, '안중근', NULL, '010-xxxx-6373');
+
+select * from member_back;
+
+15.TCL->밑에 끝까지 진행하고 10번 20번 만 남겨놓는거로 돌아가고 적용시키기->그리고 빠르게 레코드 없애고 테이블 삭제 
+create table dept_tran
+as
+select * from dept;
+
+savepoint c0;
+
+delete from dept_tran
+where deptno=40;
+
+savepoint c1;
+delete from dept_tran where deptno=30;
+
+savepoint c2;
+delete from dept_tran where deptno=20;
+
+savepoint c3;
+delete from dept_tran where deptno=10;
+
+select * from dept_tran;
+
+16.스칼라 서브쿼리이용->모든 사원의 emp의 부서번호(deptno)와 일치하는 dept의 부서명(dname) 출력 
+17.중첩서브쿼리->emp에서 SCOTT의 급여와 동일하거나 더 많이 받는 사원 명과 급여를 출력하시오
+18.중첩서브쿼리이용->emp와 dept통해DALLAS에서 근무하는 사원의 이름, 부서 번호를 출력하시오.
+19.집계함수사용->부서번호(deptno) 10번에 근무하는 사원 중에서 가장 적은 급여 보다
+ 더 많은 급여 수령자의 사원명, 급여, 부서번호을 출력하시오.
+20. 다중행 연산자->직급(JOB)이 MANAGER인 사람이 속한 부서의 부서 번호와 부서명과 지역을 출력하시오
+21. exists문 사용-> 직책((JOB)이 'SALESMAN‘이 있는 부서번호와 부서명을 출력하시오
+
+22.emp에서 from절에서 sal내림차순 정렬하고 거짓 레코드로 1등부터 5등까지
+23. dept copy하고 똑같은 레코드 집어넣고 하나만 삭제하는 방법
