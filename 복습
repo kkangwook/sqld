@@ -229,7 +229,8 @@ select * from dept_tran;
 
 75. hospital project: doctors, nurses, patients, treatments 테이블 사용
 - 진료일이 2013년 6월 이후 환자정보 조회하기/조회할 칼럼 : 의사id, 환자id, 진료내용(treat_contents), 진료일(tread_date), 환자명
-    treatments와 patients테이블 조인
+col=doc_id, pat_id, treat_contents, tread_date,pat_name    
+treatments와 patients테이블 조인
 -50021간호사와 601의사가 함께 진료하는 환자 정보 조회하기 /조회할 칼럼 : 간호사id, 간호사명, 의사id, 의사명, 환자명
     nurses, doctors, patients세개 조인
 
