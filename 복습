@@ -232,6 +232,7 @@ select * from dept_tran;
 col=doc_id, pat_id, treat_contents, tread_date,pat_name    
 treatments와 patients테이블 조인
 -50021간호사와 601의사가 함께 진료하는 환자 정보 조회하기 /조회할 칼럼 : 간호사id, 간호사명, 의사id, 의사명, 환자명
+                            nur_id, nur_name,  doc_id, doc_name, pat_name
     nurses, doctors, patients세개 조인
 
 76. marketing project
